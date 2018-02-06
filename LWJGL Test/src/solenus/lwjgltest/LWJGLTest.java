@@ -60,16 +60,17 @@ public class LWJGLTest
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(1600, 900, "Hello World!", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        /* NOT NEEDED FOR THS PROJECT
+        //Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> 
         {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
+        });*/
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) 
@@ -84,12 +85,9 @@ public class LWJGLTest
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             // Center the window
-            glfwSetWindowPos(
-                window,
-                (vidmode.width() - pWidth.get(0)) / 2,
-                (vidmode.height() - pHeight.get(0)) / 2
-            );
-        } // the stack frame is popped automatically
+            glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0))/2, (vidmode.height() - pHeight.get(0))/2);
+        } 
+        // the stack frame is popped automatically
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -110,19 +108,43 @@ public class LWJGLTest
         GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.68f, 0.68f, 0.68f, 0.0f);
+        glOrtho(0, 1600, 0, 900, -1, 1);
 
+        //get the start time for the game and other frame attributes
+        long timeStart = System.nanoTime();
+        long frameTime = 1000000000/60;
+        long nextFrame = timeStart + frameTime;
+        long frameCount = 0;
+        
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window)) 
         {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-                glfwSwapBuffers(window); // swap the color buffers
+            if(System.nanoTime() > nextFrame)
+            {
+                //game frame
+                
+                nextFrame += frameTime;
+                frameCount++;
+            }
+            
+            glBegin(GL_QUADS);
+            
+            glVertex2f(100,100);
+            glVertex2f(200,100);
+            glVertex2f(175,200);
+            glVertex2f(125,200);
+            
+            glEnd();
 
-                // Poll for window events. The key callback above will only be
-                // invoked during this call.
-                glfwPollEvents();
+
+            // swap the color buffers
+            glfwSwapBuffers(window); 
+            // Poll for window events. The key callback above will only be invoked during this call.
+            glfwPollEvents();
         }
     }
 
