@@ -135,8 +135,8 @@ public class LWJGLTest
             
             glVertex2f(100,100);
             glVertex2f(200,100);
-            glVertex2f(175,200);
-            glVertex2f(125,200);
+            glVertex2f(200,200);
+            glVertex2f(100,200);
             
             glEnd();
 
