@@ -139,6 +139,7 @@ public class LWJGLTest
             glVertex2f(100,200);
             
             glEnd();
+            
 
 
             // swap the color buffers
